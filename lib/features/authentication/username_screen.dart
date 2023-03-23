@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/authentication/email_screen.dart';
+import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
 
 import '../../constants/gaps.dart';
 
@@ -17,12 +19,30 @@ class _UsernameScreenState extends State<UsernameScreen> {
   @override
   void initState() {
     super.initState();
-
     _usernameController.addListener(() {
       setState(() {
         _username = _usernameController.text;
       });
     });
+  }
+
+  void _onNextTap() {
+    if (_username.isEmpty) return;
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const EmailScreen(),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    // 위젯을 날렸을때 dispose하지 않으면 앱이 충돌남(메모리에 계속 남음)
+    _usernameController.dispose();
+
+    // 생명주기에 따라 다른것들을 모두 정리하고 마지막에 super.dispose 호출. 설득력있어보이는 코드.
+    super.dispose();
   }
 
   @override
@@ -74,28 +94,13 @@ class _UsernameScreenState extends State<UsernameScreen> {
                 ),
               ),
             ),
-            Gaps.v16,
-            FractionallySizedBox(
-              widthFactor: 1,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                padding: const EdgeInsets.symmetric(vertical: Sizes.size16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Sizes.size5),
-                  color: _username.isEmpty
-                      ? Colors.grey.shade400
-                      : Theme.of(context).primaryColor,
-                ),
-                child: const Text(
-                  'Next',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+            Gaps.v28,
+            GestureDetector(
+              onTap: _onNextTap,
+              child: FormButton(
+                disabled: _username.isEmpty,
               ),
-            )
+            ),
           ],
         ),
       ),
