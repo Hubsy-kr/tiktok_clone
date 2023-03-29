@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/features/main_navigation/widgets/nav_tab.dart';
 import 'package:tiktok_clone/features/main_navigation/widgets/post_video_button.dart';
+import 'package:tiktok_clone/features/video/video.timeline.screen.dart';
 
 import '../../constants/gaps.dart';
 import '../../constants/sizes.dart';
@@ -37,13 +38,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       body: Stack(
         children: [
           Offstage(
-            offstage: _selectedIndex != 0,
-            child: const Center(
-              child: Text(
-                'Home',
-              ),
-            ),
-          ),
+              offstage: _selectedIndex != 0,
+              child: const VideoTimelineScreen()),
           Offstage(
             offstage: _selectedIndex != 1,
             child: const Center(
