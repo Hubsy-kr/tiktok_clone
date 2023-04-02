@@ -19,6 +19,7 @@ class _ActivityScreenState extends State<ActivityScreen>
     duration: const Duration(milliseconds: 200),
   );
 
+  bool _showBarrier = false;
   final List<Map<String, dynamic>> _tabs = [
     {
       "title": "All activity",
@@ -56,17 +57,26 @@ class _ActivityScreenState extends State<ActivityScreen>
     end: const Offset(0, 0),
   ).animate(_animationController);
 
+  late final Animation<Color?> _barrierAnimation = ColorTween(
+    begin: Colors.transparent,
+    end: Colors.black38,
+  ).animate(_animationController);
+
   void _onDismissed(String notification) {
     _notification.remove(notification);
     setState(() {});
   }
 
-  void _onTitleTap() {
+  void _toggleAnimations() async {
     if (_animationController.isCompleted) {
-      _animationController.reverse();
+      await _animationController.reverse();
     } else {
       _animationController.forward();
     }
+
+    setState(() {
+      _showBarrier = !_showBarrier;
+    });
   }
 
   @override
@@ -74,7 +84,7 @@ class _ActivityScreenState extends State<ActivityScreen>
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-          onTap: _onTitleTap,
+          onTap: _toggleAnimations,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -197,6 +207,12 @@ class _ActivityScreenState extends State<ActivityScreen>
                 ),
             ],
           ),
+          if (_showBarrier)
+            AnimatedModalBarrier(
+              color: _barrierAnimation,
+              dismissible: true, // modal 없애는데 쓰임
+              onDismiss: _toggleAnimations,
+            ),
           SlideTransition(
             position: _panelAnimation,
             child: Container(
