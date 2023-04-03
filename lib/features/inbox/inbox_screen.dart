@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/features/inbox/activity_screen.dart';
+import 'package:tiktok_clone/features/inbox/chats.screen.dart';
 
 import '../../constants/sizes.dart';
 
 class InboxScreen extends StatelessWidget {
   const InboxScreen({super.key});
 
+  // stateless 위젯은 context를 가질수없어서 매개변수로 받아야함
+  void _onDmPressed(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ChatsScreen(),
+      ),
+    );
+  }
+
+  void _onActivityTap(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ActivityScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    void _onDmPressed() {}
-
-    void _onActivityTap(BuildContext context) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const ActivityScreen(),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('inbox'),
@@ -26,7 +34,7 @@ class InboxScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: _onDmPressed,
+            onPressed: () => _onDmPressed(context),
             icon: const FaIcon(
               FontAwesomeIcons.paperPlane,
             ),
