@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/features/video/widgets/video_post.dart';
 
+import '../../constants/breakpoints.dart';
+
 class VideoTimelineScreen extends StatefulWidget {
   const VideoTimelineScreen({super.key});
 
@@ -61,8 +63,11 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
         itemCount: _itemCount,
         scrollDirection: Axis.vertical,
         onPageChanged: _onPageChanged,
-        itemBuilder: (context, index) =>
-            VideoPost(onVideoFinished: _onVideoFinished, index: index),
+        itemBuilder: (context, index) => ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: Breakpoints.sm,
+            ),
+            child: VideoPost(onVideoFinished: _onVideoFinished, index: index)),
       ),
     );
   }

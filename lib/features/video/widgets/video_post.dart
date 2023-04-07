@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/features/video/widgets/video_button.dart';
 import 'package:tiktok_clone/features/video/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
@@ -28,6 +30,7 @@ class _VideoPostState extends State<VideoPost>
   late final AnimationController _animationController;
 
   bool _isPaused = false;
+  bool _isMuted = true;
   final Duration _animationDuration = const Duration(milliseconds: 300);
 
   void _initVideoPlayer() async {
@@ -36,6 +39,10 @@ class _VideoPostState extends State<VideoPost>
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
     _videoPlayerController.addListener(_onVideoChange);
+    if (kIsWeb) {
+      await _videoPlayerController.setVolume(0);
+    }
+
     setState(() {});
   }
 
@@ -106,10 +113,30 @@ class _VideoPostState extends State<VideoPost>
       context: context,
       isScrollControlled: true, // bottomSheet 사이즈 조절 가능
       backgroundColor: Colors.transparent,
-      builder: (context) => const VideoComments(),
+      builder: (context) => Center(
+        heightFactor: 2,
+        child: Container(
+          constraints: const BoxConstraints(
+            maxWidth: Breakpoints.sm,
+          ),
+          child: const VideoComments(),
+        ),
+      ),
     );
 
     _onTaogglePause();
+  }
+
+  void _onVolumChanged() {
+    if (_isMuted) {
+      _videoPlayerController.setVolume(0.0);
+    } else {
+      _videoPlayerController.setVolume(1.0);
+    }
+
+    setState(() {
+      _isMuted = !_isMuted;
+    });
   }
 
   @override
@@ -179,12 +206,22 @@ class _VideoPostState extends State<VideoPost>
             right: 10,
             child: Column(
               children: [
+                GestureDetector(
+                  onTap: _onVolumChanged,
+                  child: VideoButton(
+                    icon: _isMuted
+                        ? FontAwesomeIcons.volumeXmark
+                        : FontAwesomeIcons.volumeHigh,
+                    text: _isMuted ? 'mute' : 'unmute',
+                  ),
+                ),
+                Gaps.v24,
                 const CircleAvatar(
                   radius: 25,
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
                   foregroundImage: NetworkImage(
-                      "https://avatars.githubusercontent.com/u/3612017?v=4"),
+                      "https://avatars.githubusercontent.com/u/46519875?v=4"),
                   child: Text('진수'),
                 ),
                 Gaps.v24,

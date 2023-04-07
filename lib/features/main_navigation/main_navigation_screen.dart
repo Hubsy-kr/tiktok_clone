@@ -18,7 +18,7 @@ class MainNavigationScreen extends StatefulWidget {
 }
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
-  int _selectedIndex = 4;
+  int _selectedIndex = 1;
 
   void _onTap(int index) {
     FocusScope.of(context).unfocus();
