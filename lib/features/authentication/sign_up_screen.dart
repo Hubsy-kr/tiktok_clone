@@ -8,22 +8,40 @@ import 'package:tiktok_clone/features/authentication/widgets/auth_button.dart';
 import 'package:tiktok_clone/utils.dart';
 
 class SignUpScreen extends StatelessWidget {
+  static String routeName = "/";
+
   const SignUpScreen({super.key});
 
-  void _onSignUpTap(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
-      ),
-    );
+  void _onLoginTap(BuildContext context) {
+    Navigator.of(context).pushNamed(LoginScreen.routeName);
   }
 
   void _onEmailTap(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const UsernameScreen(),
-      ),
-    );
+    // Navigator.of(context).push(
+    //   PageRouteBuilder(
+    //     transitionDuration: const Duration(
+    //       seconds: 1,
+    //     ),
+    //     reverseTransitionDuration: const Duration(
+    //       seconds: 1,
+    //     ),
+    //     pageBuilder: (context, animation, secondaryAnimation) =>
+    //         const UsernameScreen(),
+    //     transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+    //         ScaleTransition(
+    //       scale: animation,
+    //       alignment: Alignment.bottomCenter,
+    //       child: FadeTransition(
+    //         opacity: animation,
+    //         child: child,
+    //       ),
+    //     ),
+    //   ),
+    //   // MaterialPageRoute(
+    //   //   builder: (context) => const UsernameScreen(),
+    //   // ),
+    // );
+    Navigator.of(context).pushNamed(UsernameScreen.routeName);
   }
 
   @override
@@ -129,7 +147,7 @@ class SignUpScreen extends StatelessWidget {
                   const Text('Already have an account?'),
                   Gaps.h5,
                   GestureDetector(
-                    onTap: () => _onSignUpTap(context),
+                    onTap: () => _onLoginTap(context),
                     child: Text(
                       'Log in',
                       style: TextStyle(
