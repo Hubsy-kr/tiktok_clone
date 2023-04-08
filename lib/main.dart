@@ -25,14 +25,40 @@ class TikTokApp extends StatelessWidget {
       title: 'TikTok Clone',
       themeMode: ThemeMode.system,
       darkTheme: ThemeData(
+        useMaterial3: true,
         primaryColor: const Color(0xFFE9435A),
         scaffoldBackgroundColor: Colors.black,
         brightness: Brightness.dark,
         bottomAppBarTheme: BottomAppBarTheme(
           color: Colors.grey.shade900,
         ),
+        textTheme: Typography.whiteMountainView,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.grey.shade900,
+          surfaceTintColor: Colors.grey.shade900,
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: Sizes.size20,
+            fontWeight: FontWeight.w600,
+          ),
+          actionsIconTheme: IconThemeData(
+            color: Colors.grey.shade100,
+          ),
+          iconTheme: IconThemeData(
+            color: Colors.grey.shade100,
+          ),
+        ),
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Color(0xFFE9435A),
+        ),
+        tabBarTheme: TabBarTheme(
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.grey.shade700,
+          indicatorColor: Colors.white,
+        ),
       ),
       theme: ThemeData(
+        useMaterial3: true,
         primaryColor: const Color(0xFFE9435A),
         textSelectionTheme: const TextSelectionThemeData(
           cursorColor: Color(0xFFE9435A),
@@ -40,6 +66,7 @@ class TikTokApp extends StatelessWidget {
         bottomAppBarTheme: BottomAppBarTheme(
           color: Colors.grey.shade50,
         ),
+        textTheme: Typography.blackMountainView,
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
         brightness: Brightness.light,
@@ -53,6 +80,15 @@ class TikTokApp extends StatelessWidget {
             fontSize: Sizes.size20,
             fontWeight: FontWeight.w600,
           ),
+          surfaceTintColor: Colors.white,
+        ),
+        tabBarTheme: TabBarTheme(
+          labelColor: Colors.black,
+          unselectedLabelColor: Colors.grey.shade500,
+          indicatorColor: Colors.black,
+        ),
+        listTileTheme: const ListTileThemeData(
+          iconColor: Colors.black,
         ),
       ),
       home: const SignUpScreen(),

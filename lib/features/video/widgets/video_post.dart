@@ -114,7 +114,7 @@ class _VideoPostState extends State<VideoPost>
       isScrollControlled: true, // bottomSheet 사이즈 조절 가능
       backgroundColor: Colors.transparent,
       builder: (context) => Center(
-        heightFactor: 2,
+        heightFactor: 1,
         child: Container(
           constraints: const BoxConstraints(
             maxWidth: Breakpoints.sm,

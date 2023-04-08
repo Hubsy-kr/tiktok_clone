@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/utils.dart';
 
 import '../../constants/breakpoints.dart';
 import '../../constants/gaps.dart';
@@ -98,15 +99,19 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                           borderSide: BorderSide.none,
                         ),
                         filled: true,
-                        fillColor: Colors.grey.shade200,
+                        fillColor: isDarkMode(context)
+                            ? Colors.grey.shade700
+                            : Colors.grey.shade200,
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: Sizes.size12),
                         prefixIcon: Container(
                           width: Sizes.size20,
                           alignment: Alignment.center,
-                          child: const FaIcon(
+                          child: FaIcon(
                             FontAwesomeIcons.magnifyingGlass,
-                            color: Colors.black,
+                            color: isDarkMode(context)
+                                ? Colors.white
+                                : Colors.grey.shade600,
                             size: Sizes.size16,
                           ),
                         ),
@@ -124,7 +129,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                               onTap: _onCloseIcon,
                               child: FaIcon(
                                 FontAwesomeIcons.solidCircleXmark,
-                                color: Colors.grey.shade600,
+                                color: isDarkMode(context)
+                                    ? Colors.white
+                                    : Colors.grey.shade600,
                                 size: Sizes.size16,
                               ),
                             ),
@@ -146,13 +153,11 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             ),
             isScrollable: true,
             splashFactory: NoSplash.splashFactory,
-            indicatorColor: Colors.black,
-            labelColor: Colors.black,
             labelStyle: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: Sizes.size16,
             ),
-            unselectedLabelColor: Colors.grey.shade500,
+            indicatorColor: Theme.of(context).tabBarTheme.indicatorColor,
             tabs: [
               for (var tab in tabs)
                 Tab(
@@ -198,8 +203,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                     const Text(
                       'This is a very long caption for my tiktok that im upload just now currently.',
                       style: TextStyle(
-                        fontSize: Sizes.size14,
+                        fontSize: Sizes.size18,
                         fontWeight: FontWeight.bold,
+                        height: 1.1,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -209,7 +215,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                         constraints.maxWidth > 250)
                       DefaultTextStyle(
                         style: TextStyle(
-                          color: Colors.grey.shade600,
+                          color: isDarkMode(context)
+                              ? Colors.grey.shade300
+                              : Colors.grey.shade600,
                           fontWeight: FontWeight.w600,
                         ),
                         child: Row(
