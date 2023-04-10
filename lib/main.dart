@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tiktok_clone/features/authentication/email_screen.dart';
-import 'package:tiktok_clone/features/authentication/login_screen.dart';
-import 'package:tiktok_clone/features/authentication/sign_up_screen.dart';
-import 'package:tiktok_clone/features/authentication/username_screen.dart';
+import 'package:tiktok_clone/router.dart';
 
 import 'constants/sizes.dart';
 
@@ -23,7 +20,8 @@ class TikTokApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router,
       debugShowCheckedModeBanner: false,
       title: 'TikTok Clone',
       themeMode: ThemeMode.system,
@@ -95,13 +93,6 @@ class TikTokApp extends StatelessWidget {
         ),
       ),
       //home: const SignUpScreen(),
-      initialRoute: SignUpScreen.routeName,
-      routes: {
-        SignUpScreen.routeName: (context) => const SignUpScreen(),
-        UsernameScreen.routeName: (context) => const UsernameScreen(),
-        LoginScreen.routeName: (context) => const LoginScreen(),
-        EmailScreen.routeName: (context) => const EmailScreen(),
-      },
     );
   }
 }

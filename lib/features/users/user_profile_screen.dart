@@ -8,7 +8,9 @@ import '../../constants/gaps.dart';
 import '../../constants/sizes.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({super.key});
+  final String username;
+
+  const UserProfileScreen({super.key, required this.username});
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -35,7 +37,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
                 SliverAppBar(
-                  title: const Text('Jinsu'),
+                  title: Text(widget.username),
                   centerTitle: true,
                   actions: [
                     IconButton(
@@ -51,19 +53,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   child: Column(
                     children: [
                       Gaps.v20,
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 50,
-                        foregroundImage: NetworkImage(
+                        foregroundImage: const NetworkImage(
                             'https://avatars.githubusercontent.com/u/46519875?v=4'),
-                        child: Text('Jinsu'),
+                        child: Text(widget.username),
                       ),
                       Gaps.v20,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            '@Jinsu',
-                            style: TextStyle(
+                          Text(
+                            '@${widget.username}',
+                            style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: Sizes.size18,
                             ),
