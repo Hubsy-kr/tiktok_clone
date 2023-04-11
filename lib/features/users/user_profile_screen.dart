@@ -8,9 +8,10 @@ import '../../constants/gaps.dart';
 import '../../constants/sizes.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  final String username;
+  final String username, tab;
 
-  const UserProfileScreen({super.key, required this.username});
+  const UserProfileScreen(
+      {super.key, required this.username, required this.tab});
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -31,6 +32,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       body: SafeArea(
         child: DefaultTabController(
+          initialIndex: widget.tab == 'posts' ? 0 : 1,
           // TAB은 요게 필요함
           length: 2,
           child: NestedScrollView(
