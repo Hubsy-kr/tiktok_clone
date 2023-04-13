@@ -1,6 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tiktok_clone/features/video/viedo_preview_screen.dart';
 
 import '../../constants/gaps.dart';
 import '../../constants/sizes.dart';
@@ -12,11 +15,30 @@ class VideoRecordingScreen extends StatefulWidget {
   State<VideoRecordingScreen> createState() => _VideoRecordingScreenState();
 }
 
-class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
+class _VideoRecordingScreenState extends State<VideoRecordingScreen>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   bool _hasPermission = false;
   bool _deniedPermissions = false;
+  bool _isSelfieMode = false;
 
-  late final CameraController _cameraController;
+  late final AnimationController _buttonAnimationController =
+      AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 200),
+  );
+
+  late final AnimationController _progressAnimationController =
+      AnimationController(
+          vsync: this,
+          duration: const Duration(seconds: 10),
+          lowerBound: 0.0,
+          upperBound: 1.0);
+
+  late final Animation<double> _buttonAnimation =
+      Tween(begin: 1.0, end: 1.3).animate(_buttonAnimationController);
+
+  late FlashMode _flashMode;
+  late CameraController _cameraController;
 
   Future<void> initCamera() async {
     final cameras = await availableCameras();
@@ -26,10 +48,20 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
       return;
     }
 
-    _cameraController =
-        CameraController(cameras[0], ResolutionPreset.ultraHigh);
+    _cameraController = CameraController(
+      cameras[_isSelfieMode ? 1 : 0],
+      ResolutionPreset.ultraHigh,
+    );
 
     await _cameraController.initialize();
+
+    // iOS를 위함(가끔 영상,음성 싱크가 안맞을때가 있는데 그것을 해결)
+    // 안드로이드는 X
+    await _cameraController.prepareForVideoRecording();
+
+    _flashMode = _cameraController.value.flashMode;
+
+    setState(() {});
   }
 
   Future<void> initPermissions() async {
@@ -55,6 +87,101 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
   void initState() {
     super.initState();
     initPermissions();
+
+    // User가 어플리케이션을 벗어나면 알려줌, 그러고 다시돌아오면 이 클래스에 알려줌.
+    WidgetsBinding.instance.addObserver(this);
+
+    _progressAnimationController.addListener(() {
+      setState(() {});
+    });
+    _progressAnimationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _stopRecording();
+      }
+    });
+  }
+
+  Future<void> _toggleSelfieMode() async {
+    _isSelfieMode = !_isSelfieMode;
+    await initCamera();
+    setState(() {});
+  }
+
+  Future<void> _setFlashMode(FlashMode newFlashMode) async {
+    await _cameraController.setFlashMode(newFlashMode);
+    _flashMode = newFlashMode;
+    setState(() {});
+  }
+
+  Future<void> _startRecording(TapDownDetails _) async {
+    if (_cameraController.value.isRecordingVideo) return;
+
+    await _cameraController.startVideoRecording();
+
+    _buttonAnimationController.forward();
+    _progressAnimationController.forward();
+  }
+
+  Future<void> _stopRecording() async {
+    if (!_cameraController.value.isRecordingVideo) return;
+
+    _buttonAnimationController.reverse();
+    _progressAnimationController.reset();
+
+    final video = await _cameraController.stopVideoRecording();
+
+    // context를 asnyc로 사용하면 발생하는 경고표시위함
+    if (!mounted) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VideoPreviewScreen(
+          video: video,
+          isPicked: false,
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _progressAnimationController.dispose();
+    _cameraController.dispose();
+    _buttonAnimationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // 권한을 요청할때 어플리케이션 앞에 있고 이것을 비활성화취급함. 그래서 오류발생(initialize안됐다고)
+    if (!_hasPermission) return;
+    if (!_cameraController.value.isInitialized) return;
+    if (state == AppLifecycleState.inactive) {
+      _cameraController.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      initCamera();
+    }
+  }
+
+  Future<void> _onPickVideoPressed() async {
+    final video = await ImagePicker().pickVideo(
+      source: ImageSource.gallery,
+    );
+
+    if (video == null) return;
+
+    if (!mounted) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VideoPreviewScreen(
+          video: video,
+          isPicked: true,
+        ),
+      ),
+    );
   }
 
   @override
@@ -95,6 +222,110 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
                   CameraPreview(
                     _cameraController,
                   ),
+                  Positioned(
+                    top: Sizes.size28,
+                    right: Sizes.size14,
+                    child: Column(
+                      children: [
+                        IconButton(
+                          onPressed: _toggleSelfieMode,
+                          color: Colors.white,
+                          icon: const Icon(
+                            Icons.cameraswitch,
+                          ),
+                        ),
+                        Gaps.v10,
+                        IconButton(
+                          onPressed: () => _setFlashMode(FlashMode.off),
+                          color: _flashMode == FlashMode.off
+                              ? Colors.amber.shade200
+                              : Colors.white,
+                          icon: const Icon(
+                            Icons.flash_off_rounded,
+                          ),
+                        ),
+                        Gaps.v10,
+                        IconButton(
+                          onPressed: () => _setFlashMode(FlashMode.always),
+                          color: _flashMode == FlashMode.always
+                              ? Colors.amber.shade200
+                              : Colors.white,
+                          icon: const Icon(
+                            Icons.flash_on_rounded,
+                          ),
+                        ),
+                        Gaps.v10,
+                        IconButton(
+                          onPressed: () => _setFlashMode(FlashMode.auto),
+                          color: _flashMode == FlashMode.auto
+                              ? Colors.amber.shade200
+                              : Colors.white,
+                          icon: const Icon(
+                            Icons.flash_auto_rounded,
+                          ),
+                        ),
+                        Gaps.v10,
+                        IconButton(
+                          onPressed: () => _setFlashMode(FlashMode.torch),
+                          color: _flashMode == FlashMode.torch
+                              ? Colors.amber.shade200
+                              : Colors.white,
+                          icon: const Icon(
+                            Icons.flashlight_on_rounded,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    width: MediaQuery.of(context).size.width,
+                    bottom: Sizes.size40,
+                    child: Row(
+                      children: [
+                        const Spacer(),
+                        GestureDetector(
+                          onTapDown: _startRecording,
+                          onTapUp: (details) => _stopRecording(),
+                          child: ScaleTransition(
+                            scale: _buttonAnimation,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                SizedBox(
+                                  width: Sizes.size80 + Sizes.size14,
+                                  height: Sizes.size80 + Sizes.size14,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.red.shade400,
+                                    strokeWidth: Sizes.size6,
+                                    value: _progressAnimationController.value,
+                                  ),
+                                ),
+                                Container(
+                                  width: Sizes.size80,
+                                  height: Sizes.size80,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.red.shade400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                            child: Container(
+                          alignment: Alignment.center,
+                          child: IconButton(
+                            onPressed: _onPickVideoPressed,
+                            icon: const FaIcon(
+                              FontAwesomeIcons.image,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )),
+                      ],
+                    ),
+                  )
                 ],
               ),
       ),
