@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/authentication/email_screen.dart';
 import 'package:tiktok_clone/features/authentication/login_screen.dart';
 import 'package:tiktok_clone/features/authentication/username_screen.dart';
 import 'package:tiktok_clone/features/authentication/widgets/auth_button.dart';
@@ -15,38 +16,17 @@ class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
 
   void _onLoginTap(BuildContext context) {
-    context.push(LoginScreen.routeName);
+    context.pushNamed(LoginScreen.routeName);
   }
 
   void _onEmailTap(BuildContext context) {
-    // Navigator.of(context).push(
-    //   PageRouteBuilder(
-    //     transitionDuration: const Duration(
-    //       seconds: 1,
-    //     ),
-    //     reverseTransitionDuration: const Duration(
-    //       seconds: 1,
-    //     ),
-    //     pageBuilder: (context, animation, secondaryAnimation) =>
-    //         const UsernameScreen(),
-    //     transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-    //         ScaleTransition(
-    //       scale: animation,
-    //       alignment: Alignment.bottomCenter,
-    //       child: FadeTransition(
-    //         opacity: animation,
-    //         child: child,
-    //       ),
-    //     ),
-    //   ),
-    //   // MaterialPageRoute(
-    //   //   builder: (context) => const UsernameScreen(),
-    //   // ),
-    // );
-
-    //Navigator.of(context).pushNamed(UsernameScreen.routeName);
-
-    context.push(UsernameScreen.routeName);
+    // Navigator.push는 url을 바꾸지않고 화면전환됨
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const UsernameScreen(),
+      ),
+    );
   }
 
   @override
