@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/features/inbox/activity_screen.dart';
 import 'package:tiktok_clone/features/inbox/chats.screen.dart';
 
@@ -10,19 +11,11 @@ class InboxScreen extends StatelessWidget {
 
   // stateless 위젯은 context를 가질수없어서 매개변수로 받아야함
   void _onDmPressed(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ChatsScreen(),
-      ),
-    );
+    context.pushNamed(ChatsScreen.routeName);
   }
 
   void _onActivityTap(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ActivityScreen(),
-      ),
-    );
+    context.pushNamed(ActivityScreen.routeName);
   }
 
   @override

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../constants/sizes.dart';
 import 'chat_detail_screen.dart';
 
 class ChatsScreen extends StatefulWidget {
+  static const String routeName = 'chats';
+  static const String routeUrl = '/chats';
+
   const ChatsScreen({super.key});
 
   @override
@@ -44,17 +48,14 @@ class _ChatsScreenState extends State<ChatsScreen> {
     _items.removeAt(index);
   }
 
-  void _onChatTap() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ChatDetailScreen(),
-      ),
-    );
+  void _onChatTap(int index) {
+    // context.push('$index'); 경로를 직접 정하거나 아래와같이 할수있음
+    context.pushNamed(ChatDetailScreen.routeName, params: {'chatId': '$index'});
   }
 
   Widget _makeTile(int index) {
     return ListTile(
-      onTap: _onChatTap,
+      onTap: () => _onChatTap(index),
       onLongPress: () => _deleteItem(index),
       leading: const CircleAvatar(
         radius: 30,

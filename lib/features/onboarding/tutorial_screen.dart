@@ -4,7 +4,6 @@ import 'package:tiktok_clone/utils.dart';
 
 import '../../constants/gaps.dart';
 import '../../constants/sizes.dart';
-import '../../common/widgets/main_navigation/main_navigation_screen.dart';
 
 enum Direction { right, left }
 
@@ -46,12 +45,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
   }
 
   void _onEnterAppTap() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const MainNavigationScreen(),
-      ),
-      (route) => false,
-    );
+    //context.go('/home');
   }
 
   @override

@@ -12,6 +12,9 @@ import '../../constants/gaps.dart';
 import '../../constants/sizes.dart';
 
 class VideoRecordingScreen extends StatefulWidget {
+  static const String routeName = 'postVideo';
+  static const String routeUrl = '/upload';
+
   const VideoRecordingScreen({super.key});
 
   @override
@@ -160,13 +163,16 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
   @override
   void dispose() {
     _progressAnimationController.dispose();
-    _cameraController.dispose();
     _buttonAnimationController.dispose();
+    if (!_noCamera) {
+      _cameraController.dispose();
+    }
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_noCamera) return;
     // 권한을 요청할때 어플리케이션 앞에 있고 이것을 비활성화취급함. 그래서 오류발생(initialize안됐다고)
     if (!_hasPermission) return;
     if (!_cameraController.value.isInitialized) return;
@@ -236,6 +242,13 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
                     CameraPreview(
                       _cameraController,
                     ),
+                  const Positioned(
+                    top: Sizes.size28,
+                    left: Sizes.size14,
+                    child: CloseButton(
+                      color: Colors.white,
+                    ),
+                  ),
                   if (!_noCamera) // 카메라가 initialize되지 않으면 flashMode도 보여지면 안됌
                     Positioned(
                       top: Sizes.size28,

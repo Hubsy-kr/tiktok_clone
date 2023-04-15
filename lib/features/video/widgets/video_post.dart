@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/common/widgets/main_navigation/widgets/video_configuration/video_config.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/features/video/widgets/video_button.dart';
 import 'package:tiktok_clone/features/video/widgets/video_comments.dart';
@@ -176,6 +177,19 @@ class _VideoPostState extends State<VideoPost>
               ),
             ),
           ),
+          Positioned(
+            left: 20,
+            top: 40,
+            child: IconButton(
+              icon: FaIcon(
+                VideoConfig.of(context).autoMute
+                    ? FontAwesomeIcons.volumeHigh
+                    : FontAwesomeIcons.volumeOff,
+                color: Colors.white,
+              ),
+              onPressed: () {},
+            ),
+          ),
           const Positioned(
             bottom: 20,
             left: 10,
@@ -197,7 +211,7 @@ class _VideoPostState extends State<VideoPost>
                     fontSize: Sizes.size16,
                     color: Colors.white,
                   ),
-                )
+                ),
               ],
             ),
           ),

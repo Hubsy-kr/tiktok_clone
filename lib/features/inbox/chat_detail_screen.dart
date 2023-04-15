@@ -5,7 +5,15 @@ import '../../constants/gaps.dart';
 import '../../constants/sizes.dart';
 
 class ChatDetailScreen extends StatefulWidget {
-  const ChatDetailScreen({super.key});
+  static const String routeName = 'chatDetial';
+  static const String routeUrl = ':chatId'; // 자식경로는 '/'로 시작할수없음
+
+  final String chatId;
+
+  const ChatDetailScreen({
+    super.key,
+    required this.chatId,
+  });
 
   @override
   State<ChatDetailScreen> createState() => _ChatDetailScreenState();
@@ -45,9 +53,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ),
             ],
           ),
-          title: const Text(
-            'Jinsu',
-            style: TextStyle(
+          title: Text(
+            'Jinsu (${widget.chatId})',
+            style: const TextStyle(
               fontWeight: FontWeight.w600,
             ),
           ),
