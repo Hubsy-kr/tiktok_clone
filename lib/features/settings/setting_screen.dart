@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tiktok_clone/common/widgets/main_navigation/widgets/screen_configuration/screen_config.dart';
+import 'package:tiktok_clone/common/widgets/main_navigation/widgets/video_configuration/video_config.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -29,6 +31,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: ListView(
         children: [
+          AnimatedBuilder(
+            animation: videoConfig,
+            builder: (context, child) => SwitchListTile.adaptive(
+              value: videoConfig.autoMute,
+              onChanged: (value) {
+                videoConfig.toggleAutoMute();
+              },
+              title: const Text('Mute video'),
+            ),
+          ),
+          AnimatedBuilder(
+            animation: screenConfig,
+            builder: (context, child) => SwitchListTile.adaptive(
+              value: screenConfig.darkMode,
+              onChanged: (value) {
+                screenConfig.toggleColor();
+              },
+              title: const Text('Dark Mode'),
+            ),
+          ),
           CupertinoSwitch(
             value: _notification,
             onChanged: _onNotificationsChange,
