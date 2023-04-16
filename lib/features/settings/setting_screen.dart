@@ -1,27 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/features/video/view_models/playback_config_vm.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool _notification = false;
-
-  void _onNotificationsChange(bool? newValue) {
-    if (newValue == null) return;
-    setState(() {
-      _notification = newValue;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -32,35 +18,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         children: [
           SwitchListTile.adaptive(
-            value: context.watch<PlaybackConfigViewModel>().muted,
+            value: ref.watch(playbackConfigProvider).muted,
             onChanged: (value) =>
-                context.read<PlaybackConfigViewModel>().setMuted(value),
+                ref.read(playbackConfigProvider.notifier).setMuted(value),
             title: const Text('Mute video'),
             subtitle: const Text('Video will be muited by default.'),
           ),
           SwitchListTile.adaptive(
-            value: context.watch<PlaybackConfigViewModel>().autoplay,
+            value: ref.watch(playbackConfigProvider).autoplay,
             onChanged: (value) =>
-                context.read<PlaybackConfigViewModel>().setAutoplay(value),
+                ref.read(playbackConfigProvider.notifier).setAutoplay(value),
             title: const Text('Autoplay'),
             subtitle: const Text('Video will start playing automatically'),
           ),
           CupertinoSwitch(
-            value: _notification,
-            onChanged: _onNotificationsChange,
+            value: false,
+            onChanged: (value) {},
           ),
           Switch(
-            value: _notification,
-            onChanged: _onNotificationsChange,
+            value: false,
+            onChanged: (value) {},
           ),
           SwitchListTile.adaptive(
-            value: _notification,
-            onChanged: _onNotificationsChange,
+            value: false,
+            onChanged: (value) {},
             title: const Text('Enable notifications'),
           ),
           CheckboxListTile(
-            value: _notification,
-            onChanged: _onNotificationsChange,
+            value: false,
+            onChanged: (value) {},
             title: const Text('Enable notifications'),
           ),
           ListTile(
