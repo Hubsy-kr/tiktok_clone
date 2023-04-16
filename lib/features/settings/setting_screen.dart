@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tiktok_clone/common/widgets/main_navigation/widgets/screen_configuration/screen_config.dart';
-import 'package:tiktok_clone/common/widgets/main_navigation/widgets/video_configuration/video_config.dart';
+import 'package:tiktok_clone/features/video/view_models/playback_config_vm.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -33,18 +32,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         children: [
           SwitchListTile.adaptive(
-            value: context.watch<VideoConfig>().isMuted,
-            onChanged: (value) {
-              context.watch<VideoConfig>().toggleIsMuted();
-            },
+            value: context.watch<PlaybackConfigViewModel>().muted,
+            onChanged: (value) =>
+                context.read<PlaybackConfigViewModel>().setMuted(value),
             title: const Text('Mute video'),
+            subtitle: const Text('Video will be muited by default.'),
           ),
           SwitchListTile.adaptive(
-            value: context.watch<ScreenConfig>().darkMode,
-            onChanged: (value) {
-              context.watch<ScreenConfig>().toggleColor();
-            },
-            title: const Text('Dark Mode'),
+            value: context.watch<PlaybackConfigViewModel>().autoplay,
+            onChanged: (value) =>
+                context.read<PlaybackConfigViewModel>().setAutoplay(value),
+            title: const Text('Autoplay'),
+            subtitle: const Text('Video will start playing automatically'),
           ),
           CupertinoSwitch(
             value: _notification,

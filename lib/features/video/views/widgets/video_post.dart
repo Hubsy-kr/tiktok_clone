@@ -2,15 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:tiktok_clone/common/widgets/main_navigation/widgets/video_configuration/video_config.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
-import 'package:tiktok_clone/features/video/widgets/video_button.dart';
-import 'package:tiktok_clone/features/video/widgets/video_comments.dart';
+import 'package:tiktok_clone/features/video/view_models/playback_config_vm.dart';
+import 'package:tiktok_clone/features/video/views/widgets/video_button.dart';
+import 'package:tiktok_clone/features/video/views/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-import '../../../constants/gaps.dart';
-import '../../../constants/sizes.dart';
+import '../../../../constants/gaps.dart';
+import '../../../../constants/sizes.dart';
 
 class VideoPost extends StatefulWidget {
   final Function onVideoFinished;
@@ -32,7 +32,7 @@ class _VideoPostState extends State<VideoPost>
   late final AnimationController _animationController;
 
   bool _isPaused = false;
-  bool _isMuted = true;
+  late bool _isMuted = context.watch<PlaybackConfigViewModel>().muted;
 
   final Duration _animationDuration = const Duration(milliseconds: 300);
 
@@ -69,9 +69,14 @@ class _VideoPostState extends State<VideoPost>
       value: 1.5,
       duration: _animationDuration,
     );
+
     _animationController.addListener(() {
       setState(() {});
     });
+
+    context
+        .read<PlaybackConfigViewModel>()
+        .addListener(_onPlaybackConfigChanged);
   }
 
   @override
@@ -80,12 +85,25 @@ class _VideoPostState extends State<VideoPost>
     super.dispose();
   }
 
+  void _onPlaybackConfigChanged() {
+    if (!mounted) return;
+    final muted = context.read<PlaybackConfigViewModel>().muted;
+    if (muted) {
+      _videoPlayerController.setVolume(0);
+    } else {
+      _videoPlayerController.setVolume(1);
+    }
+  }
+
   void _onVIsibilityChanged(VisibilityInfo info) {
     if (!mounted) return;
     if (info.visibleFraction == 1 &&
         !_isPaused &&
         !_videoPlayerController.value.isPlaying) {
-      _videoPlayerController.play();
+      final autoplay = context.read<PlaybackConfigViewModel>().autoplay;
+      if (autoplay) {
+        _videoPlayerController.play();
+      }
     }
 
     if (_videoPlayerController.value.isPlaying && info.visibleFraction == 0) {
@@ -167,7 +185,7 @@ class _VideoPostState extends State<VideoPost>
                 child: Transform.scale(
                   scale: _animationController.value,
                   child: AnimatedOpacity(
-                    opacity: _isPaused ? 1 : 0,
+                    opacity: _isPaused ? 0 : 1,
                     duration: _animationDuration,
                     child: const FaIcon(
                       FontAwesomeIcons.play,
@@ -184,14 +202,12 @@ class _VideoPostState extends State<VideoPost>
             top: 40,
             child: IconButton(
               icon: FaIcon(
-                context.watch<VideoConfig>().isMuted
+                _isMuted
                     ? FontAwesomeIcons.volumeOff
                     : FontAwesomeIcons.volumeHigh,
                 color: Colors.white,
               ),
-              onPressed: () {
-                context.read<VideoConfig>().toggleIsMuted();
-              },
+              onPressed: _onVolumChanged,
             ),
           ),
           const Positioned(
@@ -224,16 +240,6 @@ class _VideoPostState extends State<VideoPost>
             right: 10,
             child: Column(
               children: [
-                GestureDetector(
-                  onTap: _onVolumChanged,
-                  child: VideoButton(
-                    icon: _isMuted
-                        ? FontAwesomeIcons.volumeXmark
-                        : FontAwesomeIcons.volumeHigh,
-                    text: _isMuted ? 'mute' : 'unmute',
-                  ),
-                ),
-                Gaps.v24,
                 const CircleAvatar(
                   radius: 25,
                   backgroundColor: Colors.black,
