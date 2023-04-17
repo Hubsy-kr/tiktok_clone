@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
+import 'package:tiktok_clone/features/video/view_models/timeline_vm.dart';
 import 'package:tiktok_clone/features/video/views/widgets/video_post.dart';
 
-class VideoTimelineScreen extends StatefulWidget {
+class VideoTimelineScreen extends ConsumerStatefulWidget {
   const VideoTimelineScreen({super.key});
 
   @override
-  State<VideoTimelineScreen> createState() => _VideoTimelineScreenState();
+  createState() => VideoTimelineScreenState();
 }
 
-class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
+class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
   final PageController _pageController = PageController();
   int _itemCount = 4;
 
@@ -53,21 +55,35 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: _onRefresh,
-      displacement: 50,
-      edgeOffset: 20,
-      child: PageView.builder(
-        controller: _pageController,
-        itemCount: _itemCount,
-        scrollDirection: Axis.vertical,
-        onPageChanged: _onPageChanged,
-        itemBuilder: (context, index) => ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: Breakpoints.sm,
+    return ref.watch(timelineProvider).when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          error: (error, stackTrace) => Center(
+            child: Text(
+              'Could not load videos: $error',
+              style: const TextStyle(
+                color: Colors.white,
+              ),
             ),
-            child: VideoPost(onVideoFinished: _onVideoFinished, index: index)),
-      ),
-    );
+          ),
+          data: (videos) => RefreshIndicator(
+            onRefresh: _onRefresh,
+            displacement: 50,
+            edgeOffset: 20,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: videos.length,
+              scrollDirection: Axis.vertical,
+              onPageChanged: _onPageChanged,
+              itemBuilder: (context, index) => ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: Breakpoints.sm,
+                  ),
+                  child: VideoPost(
+                      onVideoFinished: _onVideoFinished, index: index)),
+            ),
+          ),
+        );
   }
 }
