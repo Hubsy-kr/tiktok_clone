@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tiktok_clone/features/authentication/repositories/authentication_repo.dart';
 import 'package:tiktok_clone/features/video/view_models/playback_config_vm.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -139,7 +141,10 @@ class SettingsScreen extends ConsumerWidget {
                       child: const Text('No'),
                     ),
                     TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () {
+                        ref.read(authRepository).signOut();
+                        context.go('/');
+                      },
                       child: const Text('Yes'),
                     ),
                   ],
