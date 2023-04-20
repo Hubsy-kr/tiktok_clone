@@ -7,10 +7,24 @@ class AuthenticationRepository {
   bool get isLoggedIn => user != null;
   User? get user => _firebaseAuth.currentUser;
 
+  static String _name = '';
+  static String _birthday = '';
+
+  String get name => _name;
+  String get birthday => _birthday;
+
+  void setName(String name) {
+    _name = name;
+  }
+
+  void setBirthday(String birthday) {
+    _birthday = birthday;
+  }
+
   Stream<User?> authStateChanges() => _firebaseAuth.authStateChanges();
 
-  Future<void> signUp(String email, String password) async {
-    await _firebaseAuth.createUserWithEmailAndPassword(
+  Future<UserCredential> emailSignUp(String email, String password) async {
+    return await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
   }
 
