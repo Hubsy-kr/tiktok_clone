@@ -10,6 +10,7 @@ import '../models/user_profile_model.dart';
 class UsersViewModel extends AsyncNotifier<UserProfileModel> {
   late final UserRepository _userRepository;
   late final AuthenticationRepository _authenticationRepository;
+
   @override
   FutureOr<UserProfileModel> build() async {
     _userRepository = ref.read(userRepository);
@@ -29,6 +30,7 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
   Future<void> createProfile(UserCredential credential) async {
     state = const AsyncValue.loading();
     final profile = UserProfileModel(
+      hasAvatar: false,
       bio: ref.read(authRepository).birthday,
       link: "undefined",
       uid: credential.user!.uid,
@@ -37,6 +39,13 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
     );
     await _userRepository.createProfile(profile);
     state = AsyncValue.data(profile);
+  }
+
+  Future<void> onAvatarUpload() async {
+    if (state.value == null) return;
+
+    state = AsyncValue.data(state.value!.copyWith(hasAvatar: true));
+    await _userRepository.updateUser(state.value!.uid, {'hasAvatar': true});
   }
 }
 
