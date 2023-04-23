@@ -17,7 +17,7 @@ class Avatar extends ConsumerWidget {
     required this.hasAvatar,
   });
 
-  Future<void> _onAvatarTap(WidgetRef ref) async {
+  Future<void> _onAvatarTap(WidgetRef ref, BuildContext context) async {
     final xfile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
       imageQuality: 40,
@@ -27,7 +27,7 @@ class Avatar extends ConsumerWidget {
 
     if (xfile != null) {
       final file = File(xfile.path);
-      ref.read(avatarProvider.notifier).uploadAvatar(file);
+      ref.read(avatarProvider.notifier).uploadAvatar(file, context);
     }
   }
 
@@ -35,7 +35,7 @@ class Avatar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = ref.watch(avatarProvider).isLoading;
     return GestureDetector(
-      onTap: isLoading ? null : () => _onAvatarTap(ref),
+      onTap: isLoading ? null : () => _onAvatarTap(ref, context),
       child: isLoading
           ? Container(
               width: 50,
@@ -50,7 +50,7 @@ class Avatar extends ConsumerWidget {
               radius: 50,
               foregroundImage: hasAvatar
                   ? NetworkImage(
-                      'https://firebasestorage.googleapis.com/v0/b/tiktok-clone-hubsy.appspot.com/o/avatars%2F$uid?alt=media')
+                      'https://firebasestorage.googleapis.com/v0/b/tiktok-clone-hubsy.appspot.com/o/avatars%2F$uid?alt=media&&haha=${DateTime.now().toString()}')
                   : null,
               child: Text(name),
             ),
