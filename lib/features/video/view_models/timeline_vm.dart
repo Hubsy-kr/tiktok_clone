@@ -14,8 +14,7 @@ class TimelineViewModel extends AsyncNotifier<List<VideoModel>> {
         seconds: 2,
       ),
     );
-    final newVideo = VideoModel(title: '${DateTime.now()}');
-    _list = [..._list, newVideo];
+    _list = [..._list];
 
     // AsyncNotifier는 state=_list와 같이 안됨. 아래와 같이 해야함.
     state = AsyncValue.data(_list);
