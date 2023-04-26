@@ -13,7 +13,7 @@ class VideoTimelineScreen extends ConsumerStatefulWidget {
 
 class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
   final PageController _pageController = PageController();
-  int _itemCount = 4;
+  int _itemCount = 0;
 
   final Duration _scrollDuration = const Duration(milliseconds: 200);
   final Curve _scrollCurve = Curves.linear;
@@ -31,8 +31,7 @@ class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
     );
 
     if (page == _itemCount - 1) {
-      _itemCount = _itemCount + 4;
-      setState(() {});
+      ref.watch(timelineProvider.notifier).fetchNextPage();
     }
   }
 
@@ -67,30 +66,33 @@ class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
               ),
             ),
           ),
-          data: (videos) => RefreshIndicator(
-            onRefresh: _onRefresh,
-            displacement: 50,
-            edgeOffset: 20,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: videos.length,
-              scrollDirection: Axis.vertical,
-              onPageChanged: _onPageChanged,
-              itemBuilder: (context, index) {
-                final videoData = videos[index];
-                return ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: Breakpoints.sm,
-                  ),
-                  child: VideoPost(
-                    onVideoFinished: _onVideoFinished,
-                    index: index,
-                    videoData: videoData,
-                  ),
-                );
-              },
-            ),
-          ),
+          data: (videos) {
+            _itemCount = videos.length;
+            return RefreshIndicator(
+              onRefresh: _onRefresh,
+              displacement: 50,
+              edgeOffset: 20,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: videos.length,
+                scrollDirection: Axis.vertical,
+                onPageChanged: _onPageChanged,
+                itemBuilder: (context, index) {
+                  final videoData = videos[index];
+                  return ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: Breakpoints.sm,
+                    ),
+                    child: VideoPost(
+                      onVideoFinished: _onVideoFinished,
+                      index: index,
+                      videoData: videoData,
+                    ),
+                  );
+                },
+              ),
+            );
+          },
         );
   }
 }
