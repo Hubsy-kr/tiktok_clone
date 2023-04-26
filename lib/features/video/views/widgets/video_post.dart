@@ -12,6 +12,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../../constants/gaps.dart';
 import '../../../../constants/sizes.dart';
+import '../../view_models/video_post_vm.dart.dart';
 
 class VideoPost extends ConsumerStatefulWidget {
   final Function onVideoFinished;
@@ -41,7 +42,8 @@ class VideoPostState extends ConsumerState<VideoPost>
 
   void _initVideoPlayer() async {
     _videoPlayerController =
-        VideoPlayerController.asset('assets/videos/video.mp4');
+        // VideoPlayerController.asset('assets/videos/video.mp4');
+        VideoPlayerController.network(widget.videoData.fileUrl);
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
     _videoPlayerController.addListener(_onVideoChange);
@@ -149,6 +151,10 @@ class VideoPostState extends ConsumerState<VideoPost>
     });
   }
 
+  void _onLikeTap() {
+    ref.read(videoPostProvider(widget.videoData.id).notifier).likeVideo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
@@ -239,9 +245,12 @@ class VideoPostState extends ConsumerState<VideoPost>
                   child: Text(widget.videoData.creator),
                 ),
                 Gaps.v24,
-                VideoButton(
-                    icon: FontAwesomeIcons.solidHeart,
-                    text: '${widget.videoData.likes}'),
+                GestureDetector(
+                  onTap: _onLikeTap,
+                  child: VideoButton(
+                      icon: FontAwesomeIcons.solidHeart,
+                      text: '${widget.videoData.likes}'),
+                ),
                 Gaps.v24,
                 GestureDetector(
                     onTap: () => _onCommentsTap(context),
