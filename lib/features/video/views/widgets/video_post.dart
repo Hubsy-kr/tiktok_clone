@@ -35,6 +35,7 @@ class VideoPostState extends ConsumerState<VideoPost>
   late final VideoPlayerController _videoPlayerController;
   late final AnimationController _animationController;
 
+  final bool _isLiked = false;
   bool _isPaused = false;
   late bool _isMuted = ref.watch(playbackConfigProvider).muted;
 
@@ -153,6 +154,7 @@ class VideoPostState extends ConsumerState<VideoPost>
 
   void _onLikeTap() {
     ref.read(videoPostProvider(widget.videoData.id).notifier).likeVideo();
+    setState(() {});
   }
 
   @override
@@ -248,17 +250,26 @@ class VideoPostState extends ConsumerState<VideoPost>
                 GestureDetector(
                   onTap: _onLikeTap,
                   child: VideoButton(
-                      icon: FontAwesomeIcons.solidHeart,
-                      text: '${widget.videoData.likes}'),
+                    icon: FontAwesomeIcons.solidHeart,
+                    text: '${widget.videoData.likes}',
+                    color: _isLiked ? Colors.red : Colors.white,
+                  ),
                 ),
                 Gaps.v24,
                 GestureDetector(
-                    onTap: () => _onCommentsTap(context),
-                    child: VideoButton(
-                        icon: FontAwesomeIcons.solidComment,
-                        text: '${widget.videoData.comments}')),
+                  onTap: () => _onCommentsTap(context),
+                  child: VideoButton(
+                    icon: FontAwesomeIcons.solidComment,
+                    text: '${widget.videoData.comments}',
+                    color: Colors.white,
+                  ),
+                ),
                 Gaps.v24,
-                const VideoButton(icon: FontAwesomeIcons.share, text: 'Share'),
+                const VideoButton(
+                  icon: FontAwesomeIcons.share,
+                  text: 'Share',
+                  color: Colors.white,
+                ),
               ],
             ),
           ),
