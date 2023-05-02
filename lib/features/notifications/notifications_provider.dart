@@ -29,6 +29,8 @@ class NotificationsProvider extends FamilyAsyncNotifier<void, BuildContext> {
 
     // 어플이 닫혀있을때 받음(Background)
     FirebaseMessaging.onMessageOpenedApp.listen((notification) {
+      // firebase에서 특정해서 보낼수있음(Additional options : Custom data부분)
+      // print(notification.data['screen']);
       context.pushNamed(ChatsScreen.routeName);
     });
 

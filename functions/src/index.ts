@@ -44,9 +44,32 @@ export const onVideoCreated = functions.firestore
     .onCreate(async (snapshot, context) => {
         const db = admin.firestore(); // 권한얻기
         const [videoId, _] = snapshot.id.split("000");
-        await db.collection('videos').doc(videoId).update({
+        await db
+        .collection('videos')
+        .doc(videoId)
+        .update({
             likes: admin.firestore.FieldValue.increment(1)
         });
+        const video = await (await db.collection('/videos').doc(videoId).get()).data();
+        if(video){
+            // 영상제작자를 찾고
+            const creatorUid = video.creatorUid;
+            // 그 유저의 프로필에서 toke을 가지고
+            const user = await (await db.collection('/users').doc(creatorUid).get()).data();
+            if(user) {
+                const token = user.token;
+                // 해당기기에 메시지를 보냄
+                await admin.messaging().sendToDevice(token, {
+                    data:{
+                        screen: "123",
+                    },
+                    notification: {
+                        title: "someone liked you video",
+                        body: "Likes + 1 !"
+                    }
+                })
+            }
+        }
     });
 
     export const onLikedRemoved = functions.firestore
